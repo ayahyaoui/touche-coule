@@ -6,8 +6,8 @@
   "author": "Guillaume Hivert <hivert.is.coming@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "postinstall": "yarn --cwd contracts install && yarn --cwd frontend install",
-    "dev": "concurrently -c \"blue.bold,red.bold\" --names \"ethereum,frontend\" \"yarn --cwd contracts dev\" \"yarn --cwd frontend dev\""
+    "postinstall": "npm --prefix contracts install && npm --prefix frontend install",
+    "dev": "concurrently -c \"blue.bold,red.bold\" --names \"ethereum,frontend\" \"npm --prefix contracts run dev\" \"npm --prefix frontend run dev\""
   },
   "devDependencies": {
     "concurrently": "^7.5.0"
