@@ -3,7 +3,7 @@ pragma solidity ^0.8;
 import './Ship.sol';
 import 'hardhat/console.sol';
 
-contract FirstShip is Ship
+contract MyShip is Ship
 {
   uint height;
   uint width;
