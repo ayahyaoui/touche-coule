@@ -38,7 +38,7 @@ contract Main {
 
   function register(address ship) external {
     require(count[msg.sender] < 2, 'Only two ships');
-    require(used[ship], 'Ship alread on the board');
+    require(!used[ship], 'Ship already on the board');
     require(index <= game.height * game.width, 'Too much ship on board');
     count[msg.sender] += 1;
     ships[index] = ship;
@@ -81,6 +81,11 @@ contract Main {
         uint newPlace = (x * game.width) + y + 1;
         x = newPlace % game.width;
         y = newPlace / game.width;
+      }
+      if (newPlace == game.width * game.height) // restart (index out of range)
+      {
+        x = 0;
+        y = 0;
       }
     }
     return (x, y);
