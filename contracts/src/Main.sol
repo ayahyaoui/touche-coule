@@ -68,7 +68,7 @@ contract Main {
       if (game.xs[i] < 0) continue;
       Ship ship = Ship(ships[i]);
       (uint x, uint y) = ship.fire();
-      console.log("Main.sol: Turn fire for ${address(ship)}");
+      console.log("Main.sol: Turn fire for ", address(ship));
       if (game.board[x][y] > 0) {
         touched[game.board[x][y]] = true;
       }
@@ -92,7 +92,7 @@ contract Main {
         game.ys[idx] = int(y);
         invalid = false;
       } else {
-        uint newPlace = (x * game.width) + y + 1;
+        uint newPlace = (y * game.width) + x + 1;
         x = newPlace % game.width;
         y = newPlace / game.width;
 		if (newPlace == game.width * game.height) // restart (index out of range)
