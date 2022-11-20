@@ -1,0 +1,20 @@
+TODO
+
+Menu roulant  front app.tsx 
+choix:
+    V0: [Laisser comme ca] MR GOOD ENOUGH 
+    V1: [Optional Dificile]  creer une instance a partir du front (d’un contrat implémentant ship)
+    V2: [Optional Dificile] déploiement propre avoir un second pour migrer shipfactory
+[optionnel ] ameliorer l’interface (couleur voir forme), destruction bateau visible 
+Ameliorer main.sol => Empêcher de se tirer dessus
+Ajouter un gagnant (melange front back) (back verification du nombre de survivant apres fire event envoiye au front)
+                                        (front petite pop up ou un image pour dire que c'est terminer)    
+ 
+
+Done:
+Bateau unique + correction used prof
+    detail: chaque bateaua sa propre instance (qu'on affiche quand il execute une action)
+    correction prof => corection require register
+                    => corretion boucle infini placeShip
+                    => correction position decalge (inversion x et y)
+                    => correction used juste set used[ship] = true quand on register

@@ -3,6 +3,8 @@ pragma solidity ^0.8;
 
 import './Ship.sol';
 import 'hardhat/console.sol';
+import './BasicShip.sol';
+
 
 struct Game {
   uint height;
@@ -13,6 +15,7 @@ struct Game {
 }
 
 contract Main {
+  Ship[] allShip;
   Game private game;
   uint private index;
   mapping(address => bool) private used;
@@ -36,9 +39,9 @@ contract Main {
     emit Size(game.width, game.height);
   }
 
-  function register(address ship) external {
+  function register(address ship) public  {
     require(count[msg.sender] < 2, 'Only two ships');
-    require(used[ship], 'Ship alread on the board');
+    require(!used[ship], 'Ship already on the board');
     require(index <= game.height * game.width, 'Too much ship on board');
     count[msg.sender] += 1;
     ships[index] = ship;
@@ -47,14 +50,25 @@ contract Main {
     Ship(ships[index]).update(x, y);
     emit Registered(index, msg.sender, x, y);
     index += 1;
+    used[ship] = true;
+  }
+
+  function register2() external{
+    require(count[msg.sender] < 2, 'Only two ships');
+    require(index <= game.height * game.width, 'Too much ship on board');
+    Ship tmp = new BasicShip();
+    allShip.push(tmp);
+    register(address(tmp)); // address inutile car tmp est deja une address
   }
 
   function turn() external {
+    console.log("Main.sol:Turn start");
     bool[] memory touched = new bool[](index);
     for (uint i = 1; i < index; i++) {
       if (game.xs[i] < 0) continue;
       Ship ship = Ship(ships[i]);
       (uint x, uint y) = ship.fire();
+      console.log("Main.sol: Turn fire for ", address(ship));
       if (game.board[x][y] > 0) {
         touched[game.board[x][y]] = true;
       }
@@ -78,9 +92,14 @@ contract Main {
         game.ys[idx] = int(y);
         invalid = false;
       } else {
-        uint newPlace = (x * game.width) + y + 1;
+        uint newPlace = (y * game.width) + x + 1;
         x = newPlace % game.width;
         y = newPlace / game.width;
+		if (newPlace == game.width * game.height) // restart (index out of range)
+		{
+			x = 0;
+		    y = 0;
+		}
       }
     }
     return (x, y);
