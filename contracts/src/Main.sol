@@ -50,6 +50,7 @@ contract Main {
     Ship(ships[index]).update(x, y);
     emit Registered(index, msg.sender, x, y);
     index += 1;
+    used[ship] = true;
   }
 
   function register2() external{
@@ -57,15 +58,17 @@ contract Main {
     require(index <= game.height * game.width, 'Too much ship on board');
     Ship tmp = new BasicShip();
     allShip.push(tmp);
-    register(address(tmp));
+    register(address(tmp)); // address inutile car tmp est deja une address
   }
 
   function turn() external {
+    console.log("Main.sol:Turn start");
     bool[] memory touched = new bool[](index);
     for (uint i = 1; i < index; i++) {
       if (game.xs[i] < 0) continue;
       Ship ship = Ship(ships[i]);
       (uint x, uint y) = ship.fire();
+      console.log("Main.sol: Turn fire for ${address(ship)}");
       if (game.board[x][y] > 0) {
         touched[game.board[x][y]] = true;
       }

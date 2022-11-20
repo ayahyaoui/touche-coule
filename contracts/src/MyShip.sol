@@ -10,16 +10,14 @@ contract MyShip is Ship
   uint width;
   uint[] myMap;
   uint[] nextFire;
-  uint[] shipsPos;
+  uint shipPos;
   uint indexNextFire;
   uint lastTargeted;
-  uint nbShip;
   uint public constant MYSHIP = 42;
   uint public constant TEAMSHIP = 3; // later (maybe)
   uint public constant TARGETED = 2; // already targeted box
 
   constructor() {
-    nbShip = 0;
     lastTargeted = 0;
     width = 0;
     height = 0;
@@ -30,7 +28,6 @@ contract MyShip is Ship
   */
   function initialiseData(uint _width, uint _height) external
   {
-    require(nbShip == 0);
     width = _width;
     height = _height;
     myMap = new uint[](width * height);
@@ -48,19 +45,18 @@ contract MyShip is Ship
   {
     uint NewPos = _x + _y * width;
 
-    while (NewPos > shipsPos[nbShip] && shipsPos[nbShip] < width * height)
+    while (NewPos > shipPos && shipPos < width * height)
     {
-      nextFire.push(shipsPos[nbShip]);
-      shipsPos[nbShip] += 1;
+      nextFire.push(shipPos);
+      shipPos += 1;
     }
-    if (shipsPos[nbShip] == width * height)
-      shipsPos[nbShip] = 0;
-    while (NewPos > shipsPos[nbShip])
+    if (shipPos == width * height)
+      shipPos = 0;
+    while (NewPos > shipPos)
     {
-      nextFire.push(shipsPos[nbShip]);
-      shipsPos[nbShip] += 1;
+      nextFire.push(shipPos);
+      shipPos+= 1;
     }
-    nbShip += 1;
   }
 
   function fire() public override(Ship) returns (uint, uint)
@@ -97,12 +93,7 @@ contract MyShip is Ship
 
     this.initialiseData(_width, _height);
     console.log("Called function ====> Place");
-    if (nbShip == 0)
-    {
-       x = width - x - 1; 
-       y = height - y - 1; 
-    }
-    shipsPos.push(x + y * width);
+    shipPos = x + y * width;
     return (x, y);
   }
 }
