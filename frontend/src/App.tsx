@@ -130,10 +130,11 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
 }
 
 const Buttons = ({ wallet }: { wallet: ReturnType<typeof useWallet> }) => {
+  const reg = () => wallet?.contract.register2()
   const next = () => wallet?.contract.turn()
   return (
     <div style={{ display: 'flex', gap: 5, padding: 5 }}>
-      <button onClick={() => {}}>Register</button>
+      <button onClick={reg}>Register</button>
       <button onClick={next}>Turn</button>
     </div>
   )

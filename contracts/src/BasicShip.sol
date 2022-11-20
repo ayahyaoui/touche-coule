@@ -1,8 +1,9 @@
+// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8;
 import './Ship.sol';
 
-contract FirstShip is Ship
+contract BasicShip is Ship
 {
   uint nextPos;
   uint height;

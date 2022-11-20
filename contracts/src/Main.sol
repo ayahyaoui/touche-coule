@@ -3,6 +3,8 @@ pragma solidity ^0.8;
 
 import './Ship.sol';
 import 'hardhat/console.sol';
+import './BasicShip.sol';
+
 
 struct Game {
   uint height;
@@ -13,6 +15,7 @@ struct Game {
 }
 
 contract Main {
+  Ship[] allShip;
   Game private game;
   uint private index;
   mapping(address => bool) private used;
@@ -36,7 +39,7 @@ contract Main {
     emit Size(game.width, game.height);
   }
 
-  function register(address ship) external {
+  function register(address ship) public  {
     require(count[msg.sender] < 2, 'Only two ships');
     require(!used[ship], 'Ship already on the board');
     require(index <= game.height * game.width, 'Too much ship on board');
@@ -47,6 +50,14 @@ contract Main {
     Ship(ships[index]).update(x, y);
     emit Registered(index, msg.sender, x, y);
     index += 1;
+  }
+
+  function register2() external{
+    require(count[msg.sender] < 2, 'Only two ships');
+    require(index <= game.height * game.width, 'Too much ship on board');
+    Ship tmp = new BasicShip();
+    allShip.push(tmp);
+    register(address(tmp));
   }
 
   function turn() external {

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 
 
 pragma solidity ^0.8;
@@ -24,14 +25,14 @@ contract ShipFactory
     {
         // choose randomly an implementation of interface ship 
         //uint(keccak256(abi.encodePacked(now,msg.sender,randNonce))) % 2;
-        return new FirstShip();
+        return new BasicShip();
     }
     function createShip(uint _id) external returns (Ship)
     {
         Ship ship;
 
         if (_id % 2 == 0)
-            ship = new FirstShip();
+            ship = new BasicShip();
         else
             ship = new MyShip();
         allShips.push(ship);
