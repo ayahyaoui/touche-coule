@@ -81,11 +81,11 @@ contract Main {
         uint newPlace = (x * game.width) + y + 1;
         x = newPlace % game.width;
         y = newPlace / game.width;
-      }
-      if (newPlace == game.width * game.height) // restart (index out of range)
-      {
-        x = 0;
-        y = 0;
+		if (newPlace == game.width * game.height) // restart (index out of range)
+		{
+			x = 0;
+		    y = 0;
+		}
       }
     }
     return (x, y);

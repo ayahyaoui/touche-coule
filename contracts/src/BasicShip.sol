@@ -13,20 +13,17 @@ contract FirstShip is Ship
   
   constructor() 
   {
-    nextFire = 0;
-    width = -1;
-    height = -1;
     nbShip = 0;
   } 
 
-  function initialiseData(uint _width, uint _height) internal
+  function initialiseData(uint _width, uint _height) external 
   {
     require(nbShip == 0);
     width = _width;
     height = _height;
   }
 
-  function update(uint x, uint y) public
+  function update(uint x, uint y) public  override(Ship)
   {
     uint pos = x + y * width;
 
@@ -37,7 +34,7 @@ contract FirstShip is Ship
     nbShip += 1;
   }
 
-  function fire() public returns (uint, uint)
+  function fire() public override(Ship) returns (uint, uint) 
   {
     nextPos = nextPos + 1;
     while (nextPos == firstShip || nextPos == secondShip)
@@ -45,7 +42,7 @@ contract FirstShip is Ship
     return (nextPos % width, nextPos / height);
   }
 
-  function place(uint _width, uint _height) public returns (uint, uint)
+  function place(uint _width, uint _height) public override(Ship) returns (uint, uint)
   {
     console.log("Called function ====> Place");
     if (nbShip == 0)

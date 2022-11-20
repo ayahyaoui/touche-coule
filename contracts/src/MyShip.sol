@@ -11,15 +11,17 @@ contract MyShip is Ship
   uint[] nextFire;
   uint[] shipsPos;
   uint indexNextFire;
+  uint lastTargeted;
   uint nbShip;
   uint public constant MYSHIP = 42;
   uint public constant TEAMSHIP = 3; // later (maybe)
   uint public constant TARGETED = 2; // already targeted box
 
-  constructor() public {
+  constructor() {
     nbShip = 0;
-    width = -1;
-    height = -1;
+    lastTargeted = 0;
+    width = 0;
+    height = 0;
   } 
 
   /*
@@ -31,8 +33,6 @@ contract MyShip is Ship
     width = _width;
     height = _height;
     myMap = new uint[](width * height);
-    nextFire = new uint[]();
-    shipsPos = new uint[]();
     indexNextFire = 0;
     // if myMap is not initialise with 0
   }
@@ -43,7 +43,7 @@ contract MyShip is Ship
       to prioritize 
       (very unlikely)
   */
-  function update(uint _x, uint _y) public
+  function update(uint _x, uint _y) public override(Ship)
   {
     uint NewPos = _x + _y * width;
 
@@ -62,7 +62,7 @@ contract MyShip is Ship
     nbShip += 1;
   }
 
-  function fire() public returns (uint, uint)
+  function fire() public override(Ship) returns (uint, uint)
   {
       uint posFire;
 
@@ -72,21 +72,27 @@ contract MyShip is Ship
         indexNextFire++;
         if (myMap[posFire] == 0)
         {
-          console.log(msg.sender +  "tire sur la case " + posFire + " depuis l'adresse " + adress(this));
+          //console.log(msg.sender +  "tire sur la case " + posFire + " depuis l'adresse ");
           myMap[posFire] = TARGETED;
           return (posFire % width, posFire / width);
         }
       }
+      while(myMap[lastTargeted] != 0)
+        lastTargeted++;
+      myMap[lastTargeted] = TARGETED;
+          return (lastTargeted % width, lastTargeted / width);
+      
+
   }
 
   /*
     Pour le moment genere des positions selon l'adresse de celui qui paye les frais
     (Surtout pour le debug avoir les  meme position).
   */
-  function place(uint _width, uint _height) public returns (uint, uint)
+  function place(uint _width, uint _height) public override(Ship) returns (uint, uint)
   {
-    uint x = uint(keccak256(msg.sender)) % _width;
-    uint y = uint(keccak256(msg.sender)) % _height;
+    uint x = uint(keccak256("42"/*msg.sender*/)) % _width;
+    uint y = uint(keccak256("42"/*msg.sender*/)) % _height;
 
     this.initialiseData(_width, _height);
     console.log("Called function ====> Place");
