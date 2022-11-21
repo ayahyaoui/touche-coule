@@ -87,7 +87,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
           if (index !== x) return x_
           return x_.map((y_, indey) => {
             if (indey !== y) return y_
-            return null
+            return { index: -1 }
           })
         })
       })
@@ -130,7 +130,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
 }
 
 const Buttons = ({ wallet }: { wallet: ReturnType<typeof useWallet> }) => {
-  const reg = () => wallet?.contract.register2()
+  const reg = () => wallet?.contract.register2()           // new line
   const next = () => wallet?.contract.turn()
   return (
     <div style={{ display: 'flex', gap: 5, padding: 5 }}>
@@ -157,7 +157,10 @@ export const App = () => {
         {CELLS.fill(0).map((_, index) => {
           const x = Math.floor(index % board?.length ?? 0)
           const y = Math.floor(index / board?.[0]?.length ?? 0)
-          const background = board?.[x]?.[y] ? 'red' : undefined
+
+          const background = board?.[x]?.[y] ? (
+            (JSON.stringify(board?.[x]?.[y]) === JSON.stringify({ index: -1 })) ? 'red' : 'green') : undefined
+
           return (
             <div key={index} className={styles.cell} style={{ background }} />
           )
