@@ -21,7 +21,6 @@ contract BasicShip is Ship
     posShip = x + y * width;
     console.log("BasicShip:Update prorpio [", msg.sender, "] bateau: ");
     console.log(address(this), "position", posShip);
-
   }
 
   function fire() public override(Ship) returns (uint, uint) 

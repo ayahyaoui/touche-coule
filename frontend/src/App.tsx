@@ -130,7 +130,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
 }
 
 const Buttons = ({ wallet }: { wallet: ReturnType<typeof useWallet> }) => {
-  const reg = () => wallet?.contract.register2()           // new line
+  const reg = () => wallet?.contract.register2()
   const next = () => wallet?.contract.turn()
   return (
     <div style={{ display: 'flex', gap: 5, padding: 5 }}>

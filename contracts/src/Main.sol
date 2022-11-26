@@ -9,19 +9,18 @@ import './BasicShip.sol';
 struct Game {
   uint height;
   uint width;
-  mapping(uint => mapping(uint => uint)) board;
-  mapping(uint => int) xs;
-  mapping(uint => int) ys;
+  mapping(uint => mapping(uint => uint)) board;   // represents the board: a cell contains the number of the ship in it or 0 if there is no ship
+  mapping(uint => int) xs;             // the coordinate of each ship on the x axis (-1 is the ship was sinked)
+  mapping(uint => int) ys;             // the coordinate of each ship on the y axis
 }
 
 contract Main {
-  Ship[] allShip;
   Game private game;
-  uint private index;
-  mapping(address => bool) private used;
-  mapping(uint => address) private ships;
-  mapping(uint => address) private owners;
-  mapping(address => uint) private count;
+  uint private index;   // the total number of ships on the board + 1
+  mapping(address => bool) private used;    // indicates whether the ship (which has a contract address) is on the board
+  mapping(uint => address) private ships;   // lists the ships that are on the board (associate a number with their contract address)
+  mapping(uint => address) private owners;  // lists the owner of each ship (through the ship numbers)
+  mapping(address => uint) private count;   // the player's address is mapped to the number of ships he has
 
   event Size(uint width, uint height);
   event Touched(uint ship, uint x, uint y);
@@ -39,36 +38,42 @@ contract Main {
     emit Size(game.width, game.height);
   }
 
+  // Adds a ship on the board
   function register(address ship) public  {
-    require(count[msg.sender] < 2, 'Only two ships');
+    require(count[msg.sender] < 2, 'Only two ships allowed per player');
     require(!used[ship], 'Ship already on the board');
-    require(index <= game.height * game.width, 'Too much ship on board');
+    require(index <= game.height * game.width, 'Too many ships on the board');
+    
     count[msg.sender] += 1;
     ships[index] = ship;
     owners[index] = msg.sender;
+    used[ship] = true;
+    
     (uint x, uint y) = placeShip(index);
     Ship(ships[index]).update(x, y);
     emit Registered(index, msg.sender, x, y);
     index += 1;
-    used[ship] = true;
   }
 
   function register2() external{
-    require(count[msg.sender] < 2, 'Only two ships');
-    require(index <= game.height * game.width, 'Too much ship on board');
+    require(count[msg.sender] < 2, 'Only two ships allowed per player');
+    require(index <= game.height * game.width, 'Too many ships on the board');
     Ship tmp = new BasicShip();
-    allShip.push(tmp);
     register(address(tmp)); // address inutile car tmp est deja une address
   }
 
+  // Makes all the remaining ships fire and updates the game if a ship is touched
   function turn() external {
     console.log("Main.sol:Turn start");
-    bool[] memory touched = new bool[](index);
+    bool[] memory touched = new bool[](index); // for each ship that is still ingame, indicates whether it was touched this round
+
     for (uint i = 1; i < index; i++) {
       if (game.xs[i] < 0) continue;
+
       Ship ship = Ship(ships[i]);
       (uint x, uint y) = ship.fire();
       console.log("Main.sol: Turn fire for ", address(ship));
+
       if (game.board[x][y] > 0) {
         touched[game.board[x][y]] = true;
       }
@@ -81,25 +86,31 @@ contract Main {
     }
   }
 
+  // Places the ship n° 'idx' on the board
   function placeShip(uint idx) internal returns (uint, uint) {
     Ship ship = Ship(ships[idx]);
     (uint x, uint y) = ship.place(game.width, game.height);
     bool invalid = true;
+
     while (invalid) {
+      // Places the ship if the cell is empty
       if (game.board[x][y] == 0) {
         game.board[x][y] = idx;
         game.xs[idx] = int(x);
         game.ys[idx] = int(y);
         invalid = false;
-      } else {
+      }
+      // Calculates a new position otherwise
+      else {
         uint newPlace = (y * game.width) + x + 1;
         x = newPlace % game.width;
         y = newPlace / game.width;
-		if (newPlace == game.width * game.height) // restart (index out of range)
-		{
-			x = 0;
-		    y = 0;
-		}
+
+        if (newPlace == game.width * game.height) // restart (index out of range)
+        {
+          x = 0;
+            y = 0;
+        }
       }
     }
     return (x, y);
