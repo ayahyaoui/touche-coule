@@ -96,7 +96,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
           if (index !== x) return x_
           return x_.map((y_, indey) => {
             if (indey !== y) return y_
-            return { status: -1 }
+            return STATUS_TOUCHED
           })
         })
       }) 
@@ -198,11 +198,18 @@ export const App = () => {
           
           let getColor = (val:Number|Ship):string|undefined=>{
             if (typeof val === "number") { // flop
-              console.log("Flop reuissi");return undefined;}
-            else return 'red' // couleur peut changer selon value.status
+              if(val == STATUS_FLOP){
+                console.log("Flop reussi");
+                return 'black';
+              }
+              else if(val == STATUS_TOUCHED){
+                return 'red';
+              }
+            }
+            else return 'green' // couleur peut changer selon value.status
           }
           
-          const background = board?.[x]?.[y] ? getColor(board?.[x]?.[y]!) : 'blue'
+          const background = board?.[x]?.[y] ? getColor(board?.[x]?.[y]!) : undefined
           /*
             // peux ajouter des images de bateaux si on a le temp
           if (board?.[x]?.[y]){

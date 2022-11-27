@@ -72,7 +72,7 @@ contract Main {
 
   // Makes all the remaining ships fire and updates the game if a ship is touched
   function turn() external {
-    require(nbPlayer > 1);
+    require(nbPlayer > 1, 'There is only one player in game');
     console.log("Main.sol:Turn start");
     startGame = true;
     bool[] memory touched = new bool[](index); // for each ship that is still ingame, indicates whether it was touched this round
@@ -81,34 +81,32 @@ contract Main {
       if (game.xs[i] < 0) continue;
 
       Ship ship = Ship(ships[i]);
-      
       bool invalid = true;
+
       while(invalid){
         (uint x, uint y) = ship.fire();
         console.log("Main.sol: Turn fire for ", address(ship));
 
-        if (game.board[x][y] == 0) invalid = false;
+        if (game.board[x][y] == 0) {
+          invalid = false;
+          emit Flop(x, y);
+        }
 
         // Prevents ships from firing on their allies
-        if (game.board[x][y] > 10) {
+        if (game.board[x][y] > 0) {
           if(owners[game.board[x][y]] != owners[i]) {
             touched[game.board[x][y]] = true;
             invalid = false;
           }
         }
         if(!invalid){
-          // Emits a Flop if necessary
-          if (game.board[x][y] == 0){
-            emit Flop(x, y); // on se permet emit avant car cela n'a pas impact
-            game.board[x][y] = 2; // TODO set global constante ? 
-          }
-          // Tells the allied ships which position was targeted
+          // Tells the other ship of the player which position was targeted
           for (uint j = 1; j < index; j++) {
             if (game.xs[j] < 0) continue;
 
             if(j != i && owners[j] == owners[i]) {
               Ship(ships[j]).alreadyTargeted(x, y);
-              break; // There can only be one ally
+              break;
             }
            }
         }
