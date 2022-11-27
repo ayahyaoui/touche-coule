@@ -63,6 +63,7 @@ contract Main {
     used[ship] = true;
     
     (uint x, uint y) = placeShip(index);
+    console.log("add ship on pos", x, y);
     Ship(ships[index]).update(x, y);
     if (nbPlayer > 2)
     {   
