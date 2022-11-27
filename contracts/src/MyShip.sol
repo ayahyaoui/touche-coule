@@ -36,10 +36,8 @@ contract MyShip is Ship
   }
 
   /*
-      if the main contract give us an position 
-      not corresponding to our position we stock the difference on nextFire
-      to prioritize 
-      (very unlikely)
+    if the main contract gives us a position not corresponding to our position,
+    we stock the difference on nextFire to prioritize (very unlikely)
   */
   function update(uint _x, uint _y) public override(Ship)
   {
@@ -76,10 +74,9 @@ contract MyShip is Ship
       }
       while(myMap[lastTargeted] != 0)
         lastTargeted++;
+        
       myMap[lastTargeted] = TARGETED;
-          return (lastTargeted % width, lastTargeted / width);
-      
-
+      return (lastTargeted % width, lastTargeted / width);
   }
 
   /*
@@ -95,5 +92,18 @@ contract MyShip is Ship
     console.log("Called function ====> Place");
     shipPos = x + y * width;
     return (x, y);
+  }
+  
+  function alreadyTargeted(uint _x, uint _y) public override(Ship)
+  {
+    
+  }
+
+// accepte la premiere demande recu
+  function acceptPact(uint id) public pure override(Ship) returns (bool)
+  {
+    if (id % 2 == 1)
+      return true;
+    return false;
   }
 }
