@@ -84,6 +84,14 @@ contract Main {
     register(address(tmp)); // address inutile car tmp est deja une address
   }
 
+  function shipFactory(uint _index) external{
+    require(count[msg.sender] < 2, 'Only two ships allowed per player');
+    require(index <= game.height * game.width, 'Too many ships on the board');
+    console.log("shiopfffff", _index);
+    Ship tmp = new BasicShip();
+    register(address(tmp)); // address inutile car tmp est deja une address
+  }
+
   // Makes all the remaining ships fire and updates the game if a ship is touched
   function turn() external {
     require(nbPlayer > 1, 'There is only one player in game');
