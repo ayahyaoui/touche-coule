@@ -4,6 +4,8 @@ pragma solidity ^0.8;
 import './Ship.sol';
 import 'hardhat/console.sol';
 import './BasicShip.sol';
+import './DestroyerShip.sol';
+import './MyShip.sol';
 
 
 struct Game {
@@ -28,12 +30,14 @@ contract Main {
   event Size(uint width, uint height);
   event Touched(uint ship, uint x, uint y);
   event Flop(uint x, uint y);
+   //uint id,
   event Registered(
     uint indexed index,
     address indexed owner,
     uint x,
     uint y
   );
+  event Finish(bool isFinish);
 
   constructor() {
     game.width = 50;
@@ -77,12 +81,19 @@ contract Main {
     index += 1;
   }
 
-  function shipFactory(uint _index) external{
+  function shipFactory(uint _id) external{
     require(count[msg.sender] < 2, 'Only two ships allowed per player');
     require(index <= game.height * game.width, 'Too many ships on the board');
-    console.log("shiopfffff", _index);
-    Ship tmp = new BasicShip();
-    register(address(tmp)); // address inutile car tmp est deja une address
+    require(_id < 3, 'only 3 types of ships');
+    //console.log("shiopfffff", _index);
+    Ship ship;
+    if (_id == 0)
+        ship = new BasicShip();
+    else if(_id == 1)
+        ship = new MyShip();
+    else
+        ship = new DestroyerShip();
+    register(address(ship)); // address inutile car tmp est deja une address
   }
 
   // Makes all the remaining ships fire and updates the game if a ship is touched
@@ -104,6 +115,7 @@ contract Main {
         console.log("Main.sol: Turn fire for ", address(ship));
 
         if (game.board[x][y] == 0) {
+          // Emits a Flop if necessary
           invalid = false;
           emit Flop(x, y);
         }
@@ -116,10 +128,6 @@ contract Main {
           }
         }
         if(!invalid){
-          // Emits a Flop if necessary
-          if (game.board[x][y] == 0){
-            emit Flop(x, y); // on se permet emit avant car cela n'a pas impact
-          }
           // Tells the allied ships which position was targeted
           for (uint j = 1; j < index; j++) {
             if (game.xs[j] < 0 || i == j) continue;
@@ -146,6 +154,7 @@ contract Main {
           if (nbPlayer == 1)
           {
             console.log("FIIIIIIIIIIIINNNNIIIIII"); // 
+            emit Finish(true);
           }
         } 
         game.xs[i] = -1;
