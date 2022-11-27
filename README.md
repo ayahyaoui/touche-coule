@@ -2,6 +2,8 @@
 Anas Yahyaoui, Clément Gresh, Emeline Centaure        
 2022 - 2023 
 
+# Overview
+
 The idea of this project is to implement a "Touché Coulé" (Battleship) game
 in a decentralized way, on Ethereum. This will have cool side effects, like not
 be forced to pay for servers.
@@ -23,4 +25,38 @@ The idea of the game is to fight in a free for all style (every players will pla
 - The Main contract does not let the ships of a player fire at each other (or destroy themselves).
 - The alreadyTargeted() allows a ship to not fire at a position where its ally already fired.
 - The acceptPact() allows ships (not players) to form alliances : they simply tell each other where they fire to avoid firing at the same position. A ship can only be allied to one other ship who belongs to another player. Alliances cannot be formed if there are only 2 players in game. The Main is the one keeping track of the alliances and allowing the allied ships to communicate with each other
+
+# Install
+
+You’ll need to install dependencies. You’ll need [`HardHat`](https://hardhat.org/), [`Node.js`](https://nodejs.org/en/), [`NPM`](https://www.npmjs.com/) and [`Yarn`](https://yarnpkg.com/). You’ll need to install [`Metamask`](https://metamask.io/) as well to communicate with your blockchain.
+
+- `HardHat` is a local blockchain development, to iterate quickly and avoiding wasting Ether during development. Fortunately, you have nothing to do to install it.
+- `Node.js` is used to build the frontend and running `truffle`, which is a utility to deploy contracts.
+- `NPM` or `Yarn` is a package manager, to install dependencies for your frontend development. Yarn is recommended.
+- `Metamask` is a in-browser utility to interact with decentralized applications.
+
+Once everything is installed, launch the project (with `yarn dev`). You should have a local blockchain running in local. Open Metamask, setup it, and add an account from the Private Keys HardHat displays.
+Now you can connect Metamask to the blockchain. To do this, add a network by clicking on `Ethereum Mainnet` and `personalized RPC`. Here, you should be able to add a network.
+
+![Ganache Config](public/ganache-config.png)
+
+Once you have done it, you’re connected to the HardHat blockchain!
+
+# Launch
+
+Install dependancies						yarn
+Launch project							    yarn dev
+Connect to MetaMask on your browser
+Make sure you are using the HardHat network
+Open http://localhost:5173/
+
+On Metamask :
+    • click on « import account »
+    • use one of the 20 private keys generated in the terminal. It creates an account 1000 ETH.
+    • creates as many accounts as you want players.
+    • make sure the accounts are « connected », click on « non connected » otherwise
+
+On Metamask, everytime you start a new game, reinitialize ALL the accounts :
+    • wait for the 20 private keys to be generated
+    • settings – advanced – reset account
 
