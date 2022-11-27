@@ -98,4 +98,12 @@ contract MyShip is Ship
   {
     
   }
+
+// accepte la premiere demande recu
+  function acceptPact(uint id) public pure override(Ship) returns (bool)
+  {
+    if (id % 2 == 1)
+      return true;
+    return false;
+  }
 }

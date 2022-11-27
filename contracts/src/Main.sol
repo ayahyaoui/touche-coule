@@ -21,6 +21,7 @@ contract Main {
   mapping(uint => address) private ships;   // lists the ships that are on the board (associate a number with their contract address)
   mapping(uint => address) private owners;  // lists the owner of each ship (through the ship numbers)
   mapping(address => uint) private count;   // the player's address is mapped to the number of ships he has
+  mapping(uint => uint) private coop;
   bool startGame;
   uint nbPlayer;
 
@@ -49,7 +50,7 @@ contract Main {
     require(!used[ship], 'Ship already on the board');
     require(index <= game.height * game.width, 'Too many ships on the board');
     require(!startGame);
-    
+    console.log("registerrrr");
     if (count[msg.sender] == 0)
       nbPlayer += 1;
     count[msg.sender] += 1;
@@ -59,6 +60,19 @@ contract Main {
     
     (uint x, uint y) = placeShip(index);
     Ship(ships[index]).update(x, y);
+    if (nbPlayer > 2)
+    {   
+      for (uint i = 1; i < index; i++) {
+        if (owners[i] != msg.sender && coop[i] == 0 && Ship(ship).acceptPact(i) && Ship(ships[i]).acceptPact(index))
+        {
+          coop[i] = index;
+          coop[index] = i;
+          console.log("aaaceptation collaboaration ", i, index);
+          break; 
+        }
+      }
+    }
+
     emit Registered(index, msg.sender, x, y);
     index += 1;
   }
@@ -78,6 +92,7 @@ contract Main {
     bool[] memory touched = new bool[](index); // for each ship that is still ingame, indicates whether it was touched this round
 
     for (uint i = 1; i < index; i++) {
+      console.log("is touched ?? ",i, touched[i]);
       if (game.xs[i] < 0) continue;
 
       Ship ship = Ship(ships[i]);
@@ -93,27 +108,35 @@ contract Main {
         }
 
         // Prevents ships from firing on their allies
-        if (game.board[x][y] > 0) {
+        if (game.board[x][y] > 0 &&  game.xs[game.board[x][y]] > 0) {
           if(owners[game.board[x][y]] != owners[i]) {
             touched[game.board[x][y]] = true;
             invalid = false;
           }
         }
         if(!invalid){
-          // Tells the other ship of the player which position was targeted
+          // Emits a Flop if necessary
+          if (game.board[x][y] == 0){
+            emit Flop(x, y); // on se permet emit avant car cela n'a pas impact
+          }
+          // Tells the allied ships which position was targeted
           for (uint j = 1; j < index; j++) {
-            if (game.xs[j] < 0) continue;
+            if (game.xs[j] < 0 || i == j) continue;
 
-            if(j != i && owners[j] == owners[i]) {
+            if(game.xs[j] > 0 && (owners[j] == owners[i] || coop[i] == j)) {
               Ship(ships[j]).alreadyTargeted(x, y);
-              break;
+              console.log("cooop index", i, j);
+              console.log("cooop value", coop[i], coop[j]);
             }
            }
         }
       }
     }
+    console.log("cooop finish");
     for (uint i = 0; i < index; i++) {
+      console.log("contact front end fire", i);
       if (touched[i]) {
+        console.log("is touched", i, uint(game.xs[i]));
         emit Touched(i, uint(game.xs[i]), uint(game.ys[i]));
         count[owners[i]] -= 1;
         if (count[owners[i]] == 0)

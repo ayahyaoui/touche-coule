@@ -192,6 +192,8 @@ const Buttons = ({ wallet }: { wallet: ReturnType<typeof useWallet> }) => {
   )
 }
 
+
+
 const CELLS = new Array(100 * 100)
 export const App = () => {
   const wallet = useWallet()

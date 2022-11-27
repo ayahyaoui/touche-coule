@@ -53,4 +53,9 @@ contract BasicShip is Ship
     if (nextPos == posShip)
       nextPos++;
   }
+
+  function acceptPact(uint id) public pure override(Ship) returns (bool)
+  {
+    return true;  
+  }
 }
