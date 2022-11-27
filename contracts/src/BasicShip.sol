@@ -13,23 +13,22 @@ contract BasicShip is Ship
 
   constructor() 
   {
-    nextPos = 49;
+    nextPos = 50;
   }
 
-  function update(uint x, uint y) public  override(Ship)
+  function update(uint _x, uint _y) public override(Ship)
   {
-    posShip = x + y * width;
+    posShip = _x + _y * width;
     console.log("BasicShip:Update prorpio [", msg.sender, "] bateau: ");
     console.log(address(this), "position", posShip);
   }
 
   function fire() public override(Ship) returns (uint, uint) 
   {
-    nextPos = nextPos + 1;
-    if (nextPos == posShip)
-      nextPos++;
-    console.log("BasicShip:Fire");//, this, "en pos", nextPos);
-    return (nextPos % width, nextPos / height);
+    uint tmpPos = nextPos;
+    calculateNextPos();
+    console.log("BasicShip:Fire");//, this, "en pos", tmpPos);
+    return (tmpPos % width, tmpPos / height);
   }
 
   function place(uint _width, uint _height) public override(Ship) returns (uint, uint)
@@ -39,5 +38,19 @@ contract BasicShip is Ship
     console.log("BasicShip:place prorpio [", msg.sender, "] bateau: ");
     console.log(address(this), "try position 1,1 =>", width + 1);
     return (1, 1);
+  }
+
+  function alreadyTargeted(uint _x, uint _y) public override(Ship)
+  {
+    if(nextPos == _x + _y * width)
+      calculateNextPos();
+  }
+
+  // Calculates the position where the ship will fire at the next turn
+  function calculateNextPos() public
+  {
+    nextPos = nextPos + 1;
+    if (nextPos == posShip)
+      nextPos++;
   }
 }
