@@ -103,11 +103,23 @@ contract Main {
             touched[game.board[x][y]] = true;
             invalid = false;
           }
-          }
-          if (game.board[x][y] == 0 && !invalid){
+        }
+        if(!invalid){
+          // Emits a Flop if necessary
+          if (game.board[x][y] == 0){
             emit Flop(x, y); // on se permet emit avant car cela n'a pas impact
-           game.board[x][y] = 2; // TODO set global constante ? 
+            game.board[x][y] = 2; // TODO set global constante ? 
           }
+          // Tells the allied ships which position was targeted
+          for (uint j = 1; j < index; j++) {
+            if (game.xs[j] < 0) continue;
+
+            if(j != i && owners[j] == owners[i]) {
+              Ship(ships[j]).alreadyTargeted(x, y);
+              break; // There can only be one ally
+            }
+           }
+        }
       }
     }
     for (uint i = 0; i < index; i++) {
