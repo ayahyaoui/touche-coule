@@ -45,9 +45,13 @@ Once you have done it, you’re connected to the HardHat blockchain!
 # Launch
 
 Install dependancies						yarn
+
 Launch project							    yarn dev
+
 Connect to MetaMask on your browser
+
 Make sure you are using the HardHat network
+
 Open http://localhost:5173/
 
 On Metamask :
