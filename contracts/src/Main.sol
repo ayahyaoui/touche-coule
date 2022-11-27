@@ -77,13 +77,6 @@ contract Main {
     index += 1;
   }
 
-  function register2() external{
-    require(count[msg.sender] < 2, 'Only two ships allowed per player');
-    require(index <= game.height * game.width, 'Too many ships on the board');
-    Ship tmp = new BasicShip();
-    register(address(tmp)); // address inutile car tmp est deja une address
-  }
-
   function shipFactory(uint _index) external{
     require(count[msg.sender] < 2, 'Only two ships allowed per player');
     require(index <= game.height * game.width, 'Too many ships on the board');

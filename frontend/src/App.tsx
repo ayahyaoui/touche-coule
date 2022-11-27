@@ -188,7 +188,7 @@ const ShipOptions = ({
 }
 
 const Buttons = ({ wallet }: { wallet: ReturnType<typeof useWallet> }) => {
-  const ships = ['shop 1', 'shop 2', 'shop 3']
+  const ships = ['basicship', 'myShip', 'Destroyer']
   const [shipIndex, setShipIndex] = useState(0)
 
   const reg = () => wallet?.contract.shipFactory(shipIndex)
