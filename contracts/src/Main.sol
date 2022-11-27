@@ -99,6 +99,17 @@ contract Main {
             invalid = false;
           }
         }
+        // Tells the allied ships which position was targeted
+        if(!invalid){
+          for (uint j = 1; j < index; j++) {
+            if (game.xs[j] < 0) continue;
+            
+            if(j != i && owners[j] == owners[i]) {
+              Ship(ships[j]).alreadyTargeted(x, y);
+              break; // There can only be one ally
+            }
+          }
+        }
       }
     }
     for (uint i = 0; i < index; i++) {

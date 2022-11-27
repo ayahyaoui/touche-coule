@@ -93,4 +93,9 @@ contract MyShip is Ship
     shipPos = x + y * width;
     return (x, y);
   }
+  
+  function alreadyTargeted(uint _x, uint _y) public override(Ship)
+  {
+    
+  }
 }
