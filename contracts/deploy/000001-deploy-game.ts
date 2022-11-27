@@ -6,6 +6,8 @@ const deployer: DeployFunction = async hre => {
   const { deployer } = await hre.getNamedAccounts()
   console.log(`deployyyyyyyyyyy`);
   await hre.deployments.deploy('BasicShip', { from: deployer, log: true })
+  await hre.deployments.deploy('DestroyerShip', { from: deployer, log: true })
+  await hre.deployments.deploy('MyShip', { from: deployer, log: true })
   const test = await hre.deployments.deploy('Main', { from: deployer, log: true })
   console.log(`deployed main at ${test.address}`)
   //await hre.deployments.deploy('ShipFactory', { from: deployer, log: true })
