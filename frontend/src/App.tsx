@@ -96,7 +96,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
           if (index !== x) return x_
           return x_.map((y_, indey) => {
             if (indey !== y) return y_
-            return { status: -1 }
+            return { status: STATUS_TOUCHED }
           })
         })
       }) 
@@ -175,6 +175,8 @@ const Buttons = ({ wallet }: { wallet: ReturnType<typeof useWallet> }) => {
     </div>
   )
 }
+
+
 
 const CELLS = new Array(100 * 100)
 export const App = () => {
