@@ -73,7 +73,7 @@ contract MyShip is Ship
         }
       }
       while(myMap[lastTargeted] != 0)
-        lastTargeted++;
+        lastTargeted += 2;
         
       myMap[lastTargeted] = TARGETED;
       return (lastTargeted % width, lastTargeted / width);
@@ -85,18 +85,18 @@ contract MyShip is Ship
   */
   function place(uint _width, uint _height) public override(Ship) returns (uint, uint)
   {
-    uint x = uint(keccak256("42"/*msg.sender*/)) % _width;
-    uint y = uint(keccak256("42"/*msg.sender*/)) % _height;
+    uint x = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % (_width);
+    uint y =  _height - (_height /  4);
 
     this.initialiseData(_width, _height);
-    console.log("Called function ====> Place");
+    console.log("Called function ====> Place", x, y);
     shipPos = x + y * width;
     return (x, y);
   }
   
   function alreadyTargeted(uint _x, uint _y) public override(Ship)
   {
-    
+    myMap[_y * width + _x] = TARGETED;
   }
 
 // accepte la premiere demande recu
