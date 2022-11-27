@@ -18,5 +18,5 @@ The idea of the game is to fight in a free for all style (every players will pla
 - Different colors for the ship displaying when they are damaged by opponent attacks or intact
 - Deployment. 
 - Pop up displayed when a player win the game
-
+- Alliances between ships 
 
