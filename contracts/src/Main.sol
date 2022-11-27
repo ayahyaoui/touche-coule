@@ -92,6 +92,7 @@ contract Main {
     bool[] memory touched = new bool[](index); // for each ship that is still ingame, indicates whether it was touched this round
 
     for (uint i = 1; i < index; i++) {
+      console.log("is touched ?? ",i, touched[i]);
       if (game.xs[i] < 0) continue;
 
       Ship ship = Ship(ships[i]);
@@ -107,7 +108,7 @@ contract Main {
         }
 
         // Prevents ships from firing on their allies
-        if (game.board[x][y] > 0) {
+        if (game.board[x][y] > 0 &&  game.xs[game.board[x][y]] > 0) {
           if(owners[game.board[x][y]] != owners[i]) {
             touched[game.board[x][y]] = true;
             invalid = false;
@@ -122,7 +123,7 @@ contract Main {
           for (uint j = 1; j < index; j++) {
             if (game.xs[j] < 0 || i == j) continue;
 
-            if(owners[j] == owners[i] || coop[i] == j) {
+            if(game.xs[j] > 0 && (owners[j] == owners[i] || coop[i] == j)) {
               Ship(ships[j]).alreadyTargeted(x, y);
               console.log("cooop index", i, j);
               console.log("cooop value", coop[i], coop[j]);
@@ -131,8 +132,11 @@ contract Main {
         }
       }
     }
+    console.log("cooop finish");
     for (uint i = 0; i < index; i++) {
+      console.log("contact front end fire", i);
       if (touched[i]) {
+        console.log("is touched", i, uint(game.xs[i]));
         emit Touched(i, uint(game.xs[i]), uint(game.ys[i]));
         count[owners[i]] -= 1;
         if (count[owners[i]] == 0)
