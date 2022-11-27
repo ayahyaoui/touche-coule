@@ -4,7 +4,12 @@ import * as ethereum from '@/lib/ethereum'
 import * as main from '@/lib/main'
 import { BigNumber } from 'ethers'
 
+const STATUS_FLOP = -2
+const STATUS_TOUCHED = -1
+const STATUS_BASICSHIP = 3
+const STATUS_TITANIC = 4
 type Canceler = () => void
+
 const useAffect = (
   asyncEffect: () => Promise<Canceler | void>,
   dependencies: any[] = []
@@ -56,7 +61,10 @@ const useWallet = () => {
   }, [details, contract])
 }
 
-type Ship = {}
+//type Ship = {}
+interface Ship  {
+  status: Number
+}
 const useBoard = (wallet: ReturnType<typeof useWallet>) => {
   const [board, setBoard] = useState<(null | Ship)[][]>([])
   useAffect(async () => {
@@ -73,7 +81,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
           if (index !== x.toNumber()) return x_
           return x_.map((y_, indey) => {
             if (indey !== y.toNumber()) return y_
-            return { owner, index: id.toNumber() }
+            return { owner, index: id.toNumber(), status:1 } // todo add status (or id)for each ship ?
           })
         })
       })
@@ -87,11 +95,26 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
           if (index !== x) return x_
           return x_.map((y_, indey) => {
             if (indey !== y) return y_
-            return { index: -1 }
+            return { status: -1 }
+          })
+        })
+      }) 
+    }
+    const onFlop = (x_: BigNumber, y_: BigNumber) => {
+      const x = x_.toNumber()
+      const y = y_.toNumber()
+      console.log('onFlop position ', x, y)
+      setBoard(board => {
+        return board.map((x_, index) => {
+          if (index !== x) return x_
+          return x_.map((y_, indey) => {
+            if (indey !== y) return y_
+            return {status:STATUS_FLOP}
           })
         })
       })
     }
+
     const updateSize = async () => {
       const [event] = await wallet.contract.queryFilter('Size', 0)
       const width = event.args.width.toNumber()
@@ -114,16 +137,26 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
         onTouched(ship, x, y)
       })
     }
+    const updateFlop = async () => {
+      const flopEvent = await wallet.contract.queryFilter('Flop', 0)
+      flopEvent.forEach(event => {
+        const { ship, x, y } = event.args
+        onFlop(x, y)
+      })
+	}
     await updateSize()
     await updateRegistered()
     await updateTouched()
+    await updateFlop()
     console.log('Registering')
     wallet.contract.on('Registered', onRegistered)
     wallet.contract.on('Touched', onTouched)
+    wallet.contract.on('Flop', onFlop)
     return () => {
       console.log('Unregistering')
       wallet.contract.off('Registered', onRegistered)
       wallet.contract.off('Touched', onTouched)
+      wallet.contract.off('Flop', onFlop)
     }
   }, [wallet])
   return board
@@ -157,14 +190,25 @@ export const App = () => {
         {CELLS.fill(0).map((_, index) => {
           const x = Math.floor(index % board?.length ?? 0)
           const y = Math.floor(index / board?.[0]?.length ?? 0)
+          if ( board?.[x]?.[y]) {console.log(board[x][y]?.status)}
+          let getColor = (val:Number):string|undefined=>{if (val === STATUS_FLOP) return undefined; else return 'red'}
+          const background = board?.[x]?.[y] ? getColor(board?.[x]?.[y]!.status) : 'blue'
+          /*
+            // peux ajouter des images de bateaux si on a le temp
+          if (board?.[x]?.[y]){
 
-          const background = board?.[x]?.[y] ? (
-            (JSON.stringify(board?.[x]?.[y]) === JSON.stringify({ index: -1 })) ? 'red' : 'green') : undefined
-
-          return (
-            <div key={index} className={styles.cell} style={{ background }} />
-          )
-        })}
+           return (
+             <img key={index}  src="public/vite.svg" className={styles.cell} style={{ background }} />
+             //  <img key={index}  src="public/vite.svg" className={styles.cell} style={{ background }} />
+             
+             )}else{
+              */
+               return (
+              <div key={index} className={styles.cell} style={{ background }} />
+             // <div key={index} className={styles.cell} style={{ background }} />
+              
+        )}
+        )}
       </div>
       <Buttons wallet={wallet} />
     </div>

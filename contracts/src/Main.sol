@@ -21,9 +21,11 @@ contract Main {
   mapping(uint => address) private ships;   // lists the ships that are on the board (associate a number with their contract address)
   mapping(uint => address) private owners;  // lists the owner of each ship (through the ship numbers)
   mapping(address => uint) private count;   // the player's address is mapped to the number of ships he has
+  bool startGame;
 
   event Size(uint width, uint height);
   event Touched(uint ship, uint x, uint y);
+  event Flop(uint x, uint y);
   event Registered(
     uint indexed index,
     address indexed owner,
@@ -35,6 +37,7 @@ contract Main {
     game.width = 50;
     game.height = 50;
     index = 1;
+    startGame = false;
     emit Size(game.width, game.height);
   }
 
@@ -43,6 +46,7 @@ contract Main {
     require(count[msg.sender] < 2, 'Only two ships allowed per player');
     require(!used[ship], 'Ship already on the board');
     require(index <= game.height * game.width, 'Too many ships on the board');
+    require(!startGame);
     
     count[msg.sender] += 1;
     ships[index] = ship;
@@ -65,12 +69,21 @@ contract Main {
   // Makes all the remaining ships fire and updates the game if a ship is touched
   function turn() external {
     console.log("Main.sol:Turn start");
+    startGame = true;
     bool[] memory touched = new bool[](index); // for each ship that is still ingame, indicates whether it was touched this round
 
     for (uint i = 1; i < index; i++) {
       if (game.xs[i] < 0) continue;
 
       Ship ship = Ship(ships[i]);
+      /*(uint x, uint y) = ship.fire();
+      console.log("Main.sol: Turn fire for ", address(ship));
+      if (game.board[x][y] > 10) { // msg.sender est generalement tres grand donc utilise les premier nombre pour autre chose
+        touched[game.board[x][y]] = true;
+      }
+      else if (game.board[x][y] == 0){
+        emit Flop(x, y); // on se permet emit avant car cela n'a pas impact
+        game.board[x][y] = 2;*/ // TODO set global constante ? 
 
       bool invalid = true;
       while(invalid){
