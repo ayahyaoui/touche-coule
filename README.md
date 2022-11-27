@@ -44,9 +44,9 @@ Once you have done it, you’re connected to the HardHat blockchain!
 
 # Launch
 
-Install dependancies						yarn
+Install dependancies with "yarn"
 
-Launch project							    yarn dev
+Launch project with "yarn dev"
 
 Connect to MetaMask on your browser
 
