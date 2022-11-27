@@ -6,10 +6,10 @@ import 'hardhat/console.sol';
 
 contract BasicShip is Ship
 {
-  uint nextPos;
-  uint height;
-  uint width;
-  uint posShip;
+  uint private nextPos;
+  uint private height;
+  uint private width;
+  uint private posShip;
 
   constructor() 
   {
