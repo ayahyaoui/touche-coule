@@ -86,7 +86,7 @@ contract Main {
 
   // Makes all the remaining ships fire and updates the game if a ship is touched
   function turn() external {
-    require(nbPlayer > 1);
+    require(nbPlayer > 1, 'There is only one player in game');
     console.log("Main.sol:Turn start");
     startGame = true;
     bool[] memory touched = new bool[](index); // for each ship that is still ingame, indicates whether it was touched this round
@@ -95,13 +95,16 @@ contract Main {
       if (game.xs[i] < 0) continue;
 
       Ship ship = Ship(ships[i]);
-      
       bool invalid = true;
+
       while(invalid){
         (uint x, uint y) = ship.fire();
         console.log("Main.sol: Turn fire for ", address(ship));
 
-        if (game.board[x][y] == 0) invalid = false;
+        if (game.board[x][y] == 0) {
+          invalid = false;
+          emit Flop(x, y);
+        }
 
         // Prevents ships from firing on their allies
         if (game.board[x][y] > 0) {
