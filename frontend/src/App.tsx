@@ -165,6 +165,22 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
   return board
 }
 
+const Menu = () => {
+  return (
+    <div style={{ display: 'flex', gap: 5, padding: 5 }}>
+          <p>Choisir une stratégie:</p>
+          <select name="strats" id="strats">
+            <option value="1" selected>Bateau basique</option>
+            <option value="2">Bateau destroyer</option>
+          </select>
+          <br></br>
+    </div>
+  )
+}
+
+//var menuInput = document.getElementById("strats");
+//var value = menuInput.value;
+
 const Buttons = ({ wallet }: { wallet: ReturnType<typeof useWallet> }) => {
   const reg = () => wallet?.contract.register2()
   const next = () => {console.log("Turn Called"); wallet?.contract.turn()}
@@ -227,7 +243,10 @@ export const App = () => {
         )}
         )}
       </div>
-      <Buttons wallet={wallet} />
+      <div>
+        <Menu/>
+        <Buttons wallet={wallet}/>
+      </div>
     </div>
   )
 }
