@@ -55,12 +55,12 @@ Make sure you are using the HardHat network
 Open http://localhost:5173/
 
 On Metamask :
-    • click on « import account »
-    • use one of the 20 private keys generated in the terminal. It creates an account 1000 ETH.
-    • creates as many accounts as you want players.
-    • make sure the accounts are « connected », click on « non connected » otherwise
+- click on « import account »
+- use one of the 20 private keys generated in the terminal. It creates an account 1000 ETH
+- creates as many accounts as you want players.
+- make sure the accounts are « connected », click on « non connected » otherwise
 
 On Metamask, everytime you start a new game, reinitialize ALL the accounts :
-    • wait for the 20 private keys to be generated
-    • settings – advanced – reset account
+- wait for the 20 private keys to be generated
+- settings – advanced – reset account
 
