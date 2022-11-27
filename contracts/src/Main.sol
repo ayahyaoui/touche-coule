@@ -9,7 +9,7 @@ import './BasicShip.sol';
 struct Game {
   uint height;
   uint width;
-  mapping(uint => mapping(uint => uint)) board;   // represents the board: a cell contains the number of the ship in it or 0 if there is no ship
+  mapping(uint => mapping(uint => uint)) board;   // represents the board: a cell contains the index of the ship in it or 0 if there is no ship
   mapping(uint => int) xs;             // the coordinate of each ship on the x axis (-1 is the ship was sinked)
   mapping(uint => int) ys;             // the coordinate of each ship on the y axis
 }
@@ -71,11 +71,21 @@ contract Main {
       if (game.xs[i] < 0) continue;
 
       Ship ship = Ship(ships[i]);
-      (uint x, uint y) = ship.fire();
-      console.log("Main.sol: Turn fire for ", address(ship));
 
-      if (game.board[x][y] > 0) {
-        touched[game.board[x][y]] = true;
+      bool invalid = true;
+      while(invalid){
+        (uint x, uint y) = ship.fire();
+        console.log("Main.sol: Turn fire for ", address(ship));
+
+        if (game.board[x][y] == 0) invalid = false;
+
+        // Prevents ships from firing on their allies
+        if (game.board[x][y] > 0) {
+          if(owners[game.board[x][y]] != owners[i]) {
+            touched[game.board[x][y]] = true;
+            invalid = false;
+          }
+        }
       }
     }
     for (uint i = 0; i < index; i++) {
