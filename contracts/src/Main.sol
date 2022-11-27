@@ -81,15 +81,7 @@ contract Main {
       if (game.xs[i] < 0) continue;
 
       Ship ship = Ship(ships[i]);
-      /*(uint x, uint y) = ship.fire();
-      console.log("Main.sol: Turn fire for ", address(ship));
-      if (game.board[x][y] > 10) { // msg.sender est generalement tres grand donc utilise les premier nombre pour autre chose
-        touched[game.board[x][y]] = true;
-      }
-      else if (game.board[x][y] == 0){
-        emit Flop(x, y); // on se permet emit avant car cela n'a pas impact
-        game.board[x][y] = 2;*/ // TODO set global constante ? 
-
+      
       bool invalid = true;
       while(invalid){
         (uint x, uint y) = ship.fire();
@@ -113,6 +105,15 @@ contract Main {
     for (uint i = 0; i < index; i++) {
       if (touched[i]) {
         emit Touched(i, uint(game.xs[i]), uint(game.ys[i]));
+        count[owners[i]] -= 1;
+        if (count[owners[i]] == 0)
+        {
+          nbPlayer -=1;
+          if (nbPlayer == 1)
+          {
+            console.log("FIIIIIIIIIIIINNNNIIIIII"); // 
+          }
+        } 
         game.xs[i] = -1;
       }
     }
