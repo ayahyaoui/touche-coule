@@ -66,7 +66,7 @@ interface Ship  {
   status: Number
 }
 const useBoard = (wallet: ReturnType<typeof useWallet>) => {
-  const [board, setBoard] = useState<(null | Ship)[][]>([])
+  const [board, setBoard] = useState<(null | Ship | Number)[][]>([])
   useAffect(async () => {
     if (!wallet) return
     const onRegistered = (
@@ -88,6 +88,7 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
     }
     const onTouched = (id: BigNumber, x_: BigNumber, y_: BigNumber) => {
       console.log('onTouched')
+      console.log('onTouched', id, x_, y_)
       const x = x_.toNumber()
       const y = y_.toNumber()
       setBoard(board => {
@@ -107,9 +108,9 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
       setBoard(board => {
         return board.map((x_, index) => {
           if (index !== x) return x_
-          return x_.map((y_, indey) => {
+          else return x_.map((y_, indey) => {
             if (indey !== y) return y_
-            return {status:STATUS_FLOP}
+            else return STATUS_FLOP
           })
         })
       })
@@ -138,9 +139,11 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
       })
     }
     const updateFlop = async () => {
+      console.log("update Flop-------")
       const flopEvent = await wallet.contract.queryFilter('Flop', 0)
       flopEvent.forEach(event => {
-        const { ship, x, y } = event.args
+        console.log("Update Flop 2")
+        const { x, y } = event.args
         onFlop(x, y)
       })
 	}
@@ -164,8 +167,8 @@ const useBoard = (wallet: ReturnType<typeof useWallet>) => {
 
 const Buttons = ({ wallet }: { wallet: ReturnType<typeof useWallet> }) => {
   const reg = () => wallet?.contract.register2()
-  const next = () => wallet?.contract.turn()
-  return (
+  const next = () => {console.log("Turn Called"); wallet?.contract.turn()}
+    return (
     <div style={{ display: 'flex', gap: 5, padding: 5 }}>
       <button onClick={reg}>Register</button>
       <button onClick={next}>Turn</button>
@@ -190,9 +193,16 @@ export const App = () => {
         {CELLS.fill(0).map((_, index) => {
           const x = Math.floor(index % board?.length ?? 0)
           const y = Math.floor(index / board?.[0]?.length ?? 0)
-          if ( board?.[x]?.[y]) {console.log(board[x][y]?.status)}
-          let getColor = (val:Number):string|undefined=>{if (val === STATUS_FLOP) return undefined; else return 'red'}
-          const background = board?.[x]?.[y] ? getColor(board?.[x]?.[y]!.status) : 'blue'
+
+          if ( board?.[x]?.[y]) {console.log(board[x][y])}
+          
+          let getColor = (val:Number|Ship):string|undefined=>{
+            if (typeof val === "number") { // flop
+              console.log("Flop reuissi");return undefined;}
+            else return 'red' // couleur peut changer selon value.status
+          }
+          
+          const background = board?.[x]?.[y] ? getColor(board?.[x]?.[y]!) : 'blue'
           /*
             // peux ajouter des images de bateaux si on a le temp
           if (board?.[x]?.[y]){

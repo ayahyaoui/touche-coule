@@ -22,6 +22,7 @@ contract Main {
   mapping(uint => address) private owners;  // lists the owner of each ship (through the ship numbers)
   mapping(address => uint) private count;   // the player's address is mapped to the number of ships he has
   bool startGame;
+  uint nbPlayer;
 
   event Size(uint width, uint height);
   event Touched(uint ship, uint x, uint y);
@@ -37,6 +38,7 @@ contract Main {
     game.width = 50;
     game.height = 50;
     index = 1;
+    nbPlayer = 0;
     startGame = false;
     emit Size(game.width, game.height);
   }
@@ -48,6 +50,8 @@ contract Main {
     require(index <= game.height * game.width, 'Too many ships on the board');
     require(!startGame);
     
+    if (count[msg.sender] == 0)
+      nbPlayer += 1;
     count[msg.sender] += 1;
     ships[index] = ship;
     owners[index] = msg.sender;
@@ -68,6 +72,7 @@ contract Main {
 
   // Makes all the remaining ships fire and updates the game if a ship is touched
   function turn() external {
+    require(nbPlayer > 1);
     console.log("Main.sol:Turn start");
     startGame = true;
     bool[] memory touched = new bool[](index); // for each ship that is still ingame, indicates whether it was touched this round
@@ -93,23 +98,16 @@ contract Main {
         if (game.board[x][y] == 0) invalid = false;
 
         // Prevents ships from firing on their allies
-        if (game.board[x][y] > 0) {
+        if (game.board[x][y] > 10) {
           if(owners[game.board[x][y]] != owners[i]) {
             touched[game.board[x][y]] = true;
             invalid = false;
           }
-        }
-        // Tells the allied ships which position was targeted
-        if(!invalid){
-          for (uint j = 1; j < index; j++) {
-            if (game.xs[j] < 0) continue;
-            
-            if(j != i && owners[j] == owners[i]) {
-              Ship(ships[j]).alreadyTargeted(x, y);
-              break; // There can only be one ally
-            }
           }
-        }
+          if (game.board[x][y] == 0 && !invalid){
+            emit Flop(x, y); // on se permet emit avant car cela n'a pas impact
+           game.board[x][y] = 2; // TODO set global constante ? 
+          }
       }
     }
     for (uint i = 0; i < index; i++) {
@@ -143,7 +141,7 @@ contract Main {
         if (newPlace == game.width * game.height) // restart (index out of range)
         {
           x = 0;
-            y = 0;
+          y = 0;
         }
       }
     }
