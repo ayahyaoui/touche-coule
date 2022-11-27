@@ -256,11 +256,12 @@ export const App = () => {
              
              )}else{
               */
-          return (
-            <div key={index} className={styles.cell} style={{ background }} />
-            // <div key={index} className={styles.cell} style={{ background }} />
-          )
-        })}
+               return (
+              <div key={index} className={styles.cell} style={{ background }} />
+             // <div key={index} className={styles.cell} style={{ background }} />
+              
+        )}
+        )}
       </div>
       <Buttons wallet={wallet} />
     </div>
