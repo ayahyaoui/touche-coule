@@ -1,1 +1,0 @@
-pull request avec la branch original pour recuperer la version yarn et les modif npm
