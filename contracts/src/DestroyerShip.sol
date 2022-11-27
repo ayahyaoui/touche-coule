@@ -89,4 +89,8 @@ contract DestroyerShip is Ship {
         if(game.board[_x][_y] != MYSELF)
             game.board[_x][_y] = ALREADY_TARGETED;
     }
+    
+    function acceptPact(uint id) public pure override(Ship) returns (bool) {
+        return false;  
+    }
 }
